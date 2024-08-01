@@ -1,4 +1,7 @@
 import os
+import sys
+sys.path.append(os.getcwd())
+
 from functools import partial
 import dspy
 from dotenv import load_dotenv
@@ -11,6 +14,10 @@ from utils import sentence_transformer_embedding_function, TidbRM, RAG
 
 # Load the environment variables from the .env file.
 load_dotenv()
+print("SENTENCE_TRANSFORMERS_MODEL:{}".format(os.environ.get("SENTENCE_TRANSFORMERS_MODEL")))
+print("TIDB_DATABASE_URL:{}".format(os.environ.get("TIDB_DATABASE_URL")))
+print("LM_MODEL_NAME:{}".format(os.environ.get("LM_MODEL_NAME")))
+print("OLLAMA_BASE_URL:{}".format(os.environ.get("OLLAMA_BASE_URL")))
 
 embed_model = SentenceTransformer(os.environ.get('SENTENCE_TRANSFORMERS_MODEL'), trust_remote_code=True)
 embed_model_dim = embed_model.get_sentence_embedding_dimension()
@@ -46,10 +53,11 @@ with open('sample_data.txt', 'r') as f:
     print("sample_data.txt found.")
     sample_data = f.read()
 print("Sample data loaded successfully.")
+print("Debug sample_data:{}".format(sample_data))
 
 print("Embedding sample data...")
 documents = []
-for idx, passage in enumerate(sample_data.split('\n')[:3]):
+for idx, passage in enumerate(sample_data.split('\n')):
     embedding = embedding_function([passage])[0]
     print(idx, passage[:10], embedding[:5])
     if len(passage) == 0:
